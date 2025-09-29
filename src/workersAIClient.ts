@@ -1,0 +1,59 @@
+import {
+  type CreateChatCompletionOptions,
+  LLMClient,
+  type LogLine,
+} from "@browserbasehq/stagehand";
+import zodToJsonSchema from "zod-to-json-schema";
+
+type WorkersAIOptions = AiOptions & {
+  logger?: (line: LogLine) => void;
+};
+
+const modelId = "@cf/meta/llama-3.3-70b-instruct-fp8-fast" as const;
+
+type ModelInputs = AiModels[typeof modelId]["inputs"];
+
+// Basic implementation of LLMClient for Workers AI.
+// This uses @cf/meta/llama-3.3-70b-instruct-fp8-fast model. If you want to
+// use a different model, you can adapt this class.
+export class WorkersAIClient extends LLMClient {
+  public type = "workers-ai" as const;
+  private binding: Ai;
+  private options?: WorkersAIOptions;
+
+  constructor(binding: Ai, options?: WorkersAIOptions) {
+    super(modelId);
+    this.binding = binding;
+    this.options = options;
+  }
+
+  async createChatCompletion<T>({ options }: CreateChatCompletionOptions): Promise<T> {
+    const schema = options.response_model?.schema;
+    this.options?.logger?.({ category: "workersai", message: "thinking..." });
+
+    // Stagehand's message and tool shapes are structurally looser than the
+    // generated Workers AI input types, but the model accepts them at runtime.
+    const inputs = {
+      messages: options.messages,
+      tools: options.tools,
+      response_format: schema
+        ? {
+            type: "json_schema",
+            json_schema: zodToJsonSchema(schema),
+          }
+        : undefined,
+      temperature: 0,
+    } as unknown as ModelInputs;
+
+    const { response } = (await this.binding.run(
+      modelId,
+      inputs,
+      this.options,
+    )) as AiTextGenerationOutput;
+    this.options?.logger?.({ category: "workersai", message: "completed thinking!" });
+
+    return {
+      data: response,
+    } as T;
+  }
+}

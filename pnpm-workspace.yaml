@@ -1,0 +1,24 @@
+packages:
+  - "."
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+  # Neither install script produces anything the Worker bundle needs:
+  # @google/genai fetches optional native helpers, protobufjs patches its own
+  # CommonJS shim. Both are pulled in transitively by Stagehand.
+  "@google/genai": false
+  protobufjs: false
+  sharp: false
+
+overrides:
+  # Clears GHSA-33vc-wfww-vjfv in the diff formatter, reached only through
+  # @browserbasehq/stagehand -> ai -> jsondiffpatch. Patched in place because
+  # the fix is semver-compatible; see README for the two that are not.
+  jsondiffpatch: ">=0.7.4"
+
+minimumReleaseAge: 4320
+minimumReleaseAgeStrict: true
+
+# mise owns the package-manager binary.
+pmOnFail: ignore
