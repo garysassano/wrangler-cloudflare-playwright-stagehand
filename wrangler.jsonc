@@ -1,0 +1,18 @@
+  {
+    "name": "stagehand-example",
+    "main": "src/index.ts",
+    "compatibility_flags": ["nodejs_compat"],
+    "compatibility_date": "2025-09-17",
+    "observability": {
+      "enabled": true
+    },
+    "browser": {
+      "binding": "BROWSER"
+    },
+    "ai": {
+      "binding": "AI"
+    },
+    "alias": {
+      "playwright": "@cloudflare/playwright"
+    }
+  }

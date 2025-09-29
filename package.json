@@ -1,0 +1,26 @@
+{
+  "name": "wrangler-cloudflare-playwright-stagehand",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
+    "@cloudflare/vitest-pool-workers": "^0.8.19",
+    "playwright-core": "^1.55.1",
+    "typescript": "^5.5.2",
+    "vitest": "~3.2.0",
+    "wrangler": "^4.40.2",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "^2.5.0",
+    "@cloudflare/playwright": "^1.0.0"
+  }
+}
